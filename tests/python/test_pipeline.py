@@ -15,6 +15,7 @@ def test_pipeline_builds_expected_dataset_shape():
     assert len(dataset["scenario_results"]) == (
         len(dataset["vehicles"]) * len(dataset["scenarios"])
     )
+    assert len(dataset["ev_tariffs"]) >= 10
     assert len(dataset["rag_corpus"]) >= len(dataset["vehicles"])
     assert len(dataset["source_registry"]) >= 3
     assert all(vehicle["trim"] for vehicle in dataset["vehicles"])
@@ -36,11 +37,13 @@ def test_sqlite_artifact_contains_scenario_results():
 
     with sqlite3.connect(SQLITE_PATH) as conn:
         count = conn.execute("select count(*) from scenario_results").fetchone()[0]
+        tariff_count = conn.execute("select count(*) from ev_tariffs").fetchone()[0]
         rag_count = conn.execute("select count(*) from rag_corpus").fetchone()[0]
         source_value_count = conn.execute(
             "select count(*) from vehicle_source_values"
         ).fetchone()[0]
 
     assert count > 0
+    assert tariff_count > 0
     assert rag_count > 0
     assert source_value_count > 0

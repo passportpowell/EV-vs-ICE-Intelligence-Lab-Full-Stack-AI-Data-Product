@@ -32,6 +32,7 @@ def read_inputs() -> dict[str, pd.DataFrame]:
     return {
         "vehicles": pd.read_csv(RAW / "vehicles.csv"),
         "energy_prices": pd.read_csv(RAW / "energy_prices.csv"),
+        "ev_tariffs": pd.read_csv(RAW / "ev_tariffs.csv"),
         "grid_intensity": pd.read_csv(RAW / "grid_intensity.csv"),
         "scenario_profiles": pd.read_csv(RAW / "scenario_profiles.csv"),
         "driving_cycles": pd.read_csv(RAW / "driving_cycles.csv"),
@@ -380,6 +381,42 @@ def build_rag_corpus(
             )
         )
 
+    for _, tariff in inputs["ev_tariffs"].iterrows():
+        peak_rate = tariff.get("peak_p_per_kwh")
+        secondary_note = clean_text_value(tariff.get("secondary_source_value_note", ""))
+        tariff_notes = clean_text_value(tariff.get("notes", ""))
+        peak_phrase = (
+            f"and peak rate {peak_rate} p/kWh"
+            if not pd.isna(peak_rate)
+            else "with no separate peak EV rate because this is an add-on"
+        )
+        documents.append(
+            rag_document(
+                f"tariff-{tariff['tariff_id']}",
+                f"{tariff['supplier']} {tariff['tariff_name']}",
+                "energy-tariff",
+                [
+                    "ev tariff",
+                    "electricity",
+                    str(tariff["supplier"]).lower(),
+                    str(tariff["tariff_category"]).replace("_", " "),
+                    "standing charge",
+                ],
+                f"{tariff['supplier']} {tariff['tariff_name']} is a UK "
+                f"{tariff['tariff_category']} tariff. The default off-peak "
+                f"rate is {tariff['default_off_peak_p_per_kwh']} p/kWh "
+                f"{peak_phrase}. The off-peak window is "
+                f"{tariff['off_peak_start']} to {tariff['off_peak_end']} "
+                f"for {tariff['off_peak_hours']} hours. Standing charge is "
+                f"{tariff['standing_charge_p_per_day']} p/day with scope: "
+                f"{tariff['standing_charge_scope']}. Source is "
+                f"{tariff['source_name']} dated {tariff['source_date']}. "
+                f"{secondary_note} {tariff_notes}",
+                "data/raw/ev_tariffs.csv",
+                {"tariff_id": tariff["tariff_id"]},
+            )
+        )
+
     signal_terms = "; ".join(
         f"{row['cycle']} has energy stress {row['energy_stress_score']} and "
         f"stop share {row['stop_share_pct']} percent"
@@ -439,6 +476,51 @@ def build_rag_corpus(
 def build_source_registry() -> pd.DataFrame:
     return pd.DataFrame(
         [
+            {
+                "source_id": "mse_ev_tariff_table",
+                "source_name": "MoneySavingExpert EV tariff guide",
+                "source_type": "current_web_reference",
+                "refresh_mode": "manual refresh or scheduled scraper",
+                "fields": json.dumps(
+                    [
+                        "supplier",
+                        "tariff_name",
+                        "off_peak_p_per_kwh",
+                        "peak_p_per_kwh",
+                        "off_peak_hours",
+                        "exit_fee",
+                    ]
+                ),
+                "conflict_policy": "Keep supplier/table/user-entered values side by side with source dates.",
+            },
+            {
+                "source_id": "ofgem_price_cap",
+                "source_name": "Ofgem electricity price cap",
+                "source_type": "current_web_reference",
+                "refresh_mode": "quarterly price cap update",
+                "fields": json.dumps(
+                    ["electricity_unit_rate", "electricity_standing_charge"]
+                ),
+                "conflict_policy": "Use as an average benchmark only; supplier and region-specific charges should remain visible.",
+            },
+            {
+                "source_id": "desnz_weekly_fuel_prices",
+                "source_name": "DESNZ weekly road fuel prices",
+                "source_type": "live_csv",
+                "refresh_mode": "server route fetches the latest GOV.UK CSV",
+                "fields": json.dumps(["petrol_p_per_litre", "diesel_p_per_litre"]),
+                "conflict_policy": "Return fetched values with source URL and fallback values when live refresh fails.",
+            },
+            {
+                "source_id": "user_tariff_transcript",
+                "source_name": "User supplied EV tariff transcript",
+                "source_type": "local_reference",
+                "refresh_mode": "manual",
+                "fields": json.dumps(
+                    ["tariff_name", "off_peak_rate", "off_peak_window", "standing_charge"]
+                ),
+                "conflict_policy": "Summarise source values and keep them as secondary notes rather than overwriting current tariff references.",
+            },
             {
                 "source_id": "local_trim_catalog",
                 "source_name": "Local UK trim catalog",
@@ -550,6 +632,12 @@ def rag_document(
         "source": source,
         "metadata": metadata or {},
     }
+
+
+def clean_text_value(value: Any) -> str:
+    if value is None or pd.isna(value):
+        return ""
+    return str(value).strip()
 
 
 def synthetic_training_grid(inputs: dict[str, pd.DataFrame]) -> pd.DataFrame:
@@ -737,6 +825,7 @@ def write_outputs(
             "note": "Seed data is intentionally transparent and replaceable. It is designed for portfolio engineering, not vehicle purchase advice.",
         },
         "vehicles": round_frame(inputs["vehicles"], 3).to_dict(orient="records"),
+        "ev_tariffs": round_frame(inputs["ev_tariffs"], 3).to_dict(orient="records"),
         "scenarios": round_frame(scenarios, 3).to_dict(orient="records"),
         "scenario_results": round_frame(results, 3).to_dict(orient="records"),
         "powertrain_summary": round_frame(summary, 3).to_dict(orient="records"),
@@ -748,6 +837,9 @@ def write_outputs(
             "/api/vehicles",
             "/api/scenarios",
             "/api/comparisons?scenario=mixed_household&annualMiles=12000&ownershipYears=5",
+            "/api/tariffs",
+            "/api/prices/fuel",
+            "/api/energy-comparison?tariffId=intelligent-octopus-go&annualMiles=12000",
             "/api/rag?q=Which vehicle is best for high mileage emissions?",
             "/api/agent?q=I drive 22000 miles a year and want low running costs",
         ],
@@ -761,6 +853,9 @@ def write_outputs(
 
     with sqlite3.connect(SQLITE_PATH) as conn:
         inputs["vehicles"].to_sql("vehicles", conn, if_exists="replace", index=False)
+        inputs["ev_tariffs"].to_sql(
+            "ev_tariffs", conn, if_exists="replace", index=False
+        )
         scenarios.to_sql("scenarios", conn, if_exists="replace", index=False)
         results.to_sql("scenario_results", conn, if_exists="replace", index=False)
         summary.to_sql("powertrain_summary", conn, if_exists="replace", index=False)

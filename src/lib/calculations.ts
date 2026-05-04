@@ -20,7 +20,9 @@ export function scenarioToOverrides(scenario: Scenario): ScenarioOverrides {
     homeElectricityGbpPerKwh: scenario.home_electricity_gbp_per_kwh,
     publicRapidGbpPerKwh: scenario.public_rapid_gbp_per_kwh,
     homeChargingSharePct: scenario.home_charging_share_pct,
-    gridGco2ePerKwh: scenario.grid_gco2e_per_kwh
+    gridGco2ePerKwh: scenario.grid_gco2e_per_kwh,
+    evStandingChargeGbpPerDay: 0,
+    standingChargeAllocationPct: 0
   };
 }
 
@@ -60,12 +62,19 @@ export function calculateVehicleScenario(
   const energyUnits = (distanceKm * efficiency) / 100;
 
   const isEv = vehicle.fuel_type === "electric";
-  const energyCost = isEv
+  const unitEnergyCost = isEv
     ? energyUnits * weightedElectricityPrice(input)
     : energyUnits *
       (vehicle.fuel_type === "diesel"
         ? input.dieselGbpPerLitre
         : input.petrolGbpPerLitre);
+  const standingCost = isEv
+    ? (input.evStandingChargeGbpPerDay ?? 0) *
+      365 *
+      input.ownershipYears *
+      ((input.standingChargeAllocationPct ?? 0) / 100)
+    : 0;
+  const energyCost = unitEnergyCost + standingCost;
   const usePhaseKg = isEv
     ? (energyUnits * input.gridGco2ePerKwh) / 1000
     : ((vehicle.tailpipe_gco2_per_km * distanceKm) / 1000) *

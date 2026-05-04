@@ -14,7 +14,7 @@ import {
   Search,
   Workflow
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import {
   Bar,
@@ -41,6 +41,12 @@ import {
 import { runPortfolioAgent } from "@/lib/agent";
 import type { CatalogMatch, ProvenanceReport } from "@/lib/dvla";
 import {
+  blendedHomeTariffGbpPerKwh,
+  buildEnergyComparisonRows,
+  tariffDisplayName,
+  tariffRateInputFromTariff
+} from "@/lib/tariffs";
+import {
   uniqueSorted,
   vehicleCatalogLabel,
   vehicleDisplayName
@@ -50,6 +56,8 @@ import type {
   Scenario,
   ScenarioOverrides,
   ScenarioResult,
+  FuelPriceSnapshot,
+  TariffRateInput,
   Vehicle
 } from "@/lib/types";
 
@@ -68,6 +76,18 @@ export function Dashboard({ data }: DashboardProps) {
   const defaultScenario =
     data.scenarios.find((scenario) => scenario.scenario_id === "mixed_household") ??
     data.scenarios[0];
+  const defaultTariff =
+    data.ev_tariffs.find((tariff) => tariff.tariff_id === "intelligent-octopus-go") ??
+    data.ev_tariffs[0];
+  const defaultTariffInput: TariffRateInput = defaultTariff
+    ? tariffRateInputFromTariff(defaultTariff)
+    : {
+        offPeakPPerKwh: 8,
+        peakPPerKwh: 33.5,
+        offPeakSharePct: 90,
+        standingChargePPerDay: 57.21,
+        standingChargeAllocationPct: 100
+      };
   const [scenario, setScenario] = useState<Scenario>(defaultScenario);
   const [segment, setSegment] = useState("all");
   const [annualMiles, setAnnualMiles] = useState(defaultScenario.annual_miles);
@@ -75,11 +95,25 @@ export function Dashboard({ data }: DashboardProps) {
   const [homeShare, setHomeShare] = useState(
     defaultScenario.home_charging_share_pct
   );
-  const [homeElectricity, setHomeElectricity] = useState(
-    defaultScenario.home_electricity_gbp_per_kwh
+  const [selectedTariffId, setSelectedTariffId] = useState(
+    defaultTariff?.tariff_id ?? "custom"
+  );
+  const [offPeakRateP, setOffPeakRateP] = useState(
+    defaultTariffInput.offPeakPPerKwh
+  );
+  const [peakRateP, setPeakRateP] = useState(defaultTariffInput.peakPPerKwh);
+  const [offPeakShare, setOffPeakShare] = useState(
+    defaultTariffInput.offPeakSharePct
+  );
+  const [standingChargeP, setStandingChargeP] = useState(
+    defaultTariffInput.standingChargePPerDay
+  );
+  const [standingAllocation, setStandingAllocation] = useState(
+    defaultTariffInput.standingChargeAllocationPct
   );
   const [petrolPrice, setPetrolPrice] = useState(defaultScenario.petrol_gbp_per_litre);
   const [dieselPrice, setDieselPrice] = useState(defaultScenario.diesel_gbp_per_litre);
+  const [fuelSnapshot, setFuelSnapshot] = useState<FuelPriceSnapshot | null>(null);
   const [agentDraft, setAgentDraft] = useState(
     "I drive 22000 miles a year and want low running costs"
   );
@@ -98,26 +132,77 @@ export function Dashboard({ data }: DashboardProps) {
   const [catalogYearFilter, setCatalogYearFilter] = useState("all");
   const [catalogPowertrainFilter, setCatalogPowertrainFilter] = useState("all");
 
+  const selectedTariff = useMemo(
+    () => data.ev_tariffs.find((tariff) => tariff.tariff_id === selectedTariffId),
+    [data.ev_tariffs, selectedTariffId]
+  );
+  const tariffInput: TariffRateInput = useMemo(
+    () => ({
+      offPeakPPerKwh: offPeakRateP,
+      peakPPerKwh: peakRateP,
+      offPeakSharePct: offPeakShare,
+      standingChargePPerDay: standingChargeP,
+      standingChargeAllocationPct: standingAllocation
+    }),
+    [offPeakRateP, offPeakShare, peakRateP, standingAllocation, standingChargeP]
+  );
+  const effectiveHomeElectricity = useMemo(
+    () => blendedHomeTariffGbpPerKwh(tariffInput),
+    [tariffInput]
+  );
+
   const overrides: ScenarioOverrides = useMemo(
     () => ({
       ...scenarioToOverrides(scenario),
       annualMiles,
       ownershipYears,
       homeChargingSharePct: homeShare,
-      homeElectricityGbpPerKwh: homeElectricity,
+      homeElectricityGbpPerKwh: effectiveHomeElectricity,
       petrolGbpPerLitre: petrolPrice,
-      dieselGbpPerLitre: dieselPrice
+      dieselGbpPerLitre: dieselPrice,
+      evStandingChargeGbpPerDay: standingChargeP / 100,
+      standingChargeAllocationPct: standingAllocation
     }),
     [
       annualMiles,
       dieselPrice,
-      homeElectricity,
+      effectiveHomeElectricity,
       homeShare,
       ownershipYears,
       petrolPrice,
-      scenario
+      scenario,
+      standingAllocation,
+      standingChargeP
     ]
   );
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/prices/fuel", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((payload: FuelPriceSnapshot) => {
+        if (!active) {
+          return;
+        }
+        setFuelSnapshot(payload);
+        if (
+          Number.isFinite(payload.petrol_gbp_per_litre) &&
+          Number.isFinite(payload.diesel_gbp_per_litre)
+        ) {
+          setPetrolPrice(payload.petrol_gbp_per_litre);
+          setDieselPrice(payload.diesel_gbp_per_litre);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setFuelSnapshot(null);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const allRows = useMemo(
     () => calculateFleet(data.vehicles, overrides, scenario.scenario_id),
@@ -265,6 +350,19 @@ export function Dashboard({ data }: DashboardProps) {
   const selectedCatalogRow = allRows.find(
     (row) => row.vehicle_id === selectedCatalogVehicle.id
   );
+  const tariffComparisonRows = useMemo(
+    () =>
+      buildEnergyComparisonRows(
+        data.vehicles,
+        selectedCatalogVehicle,
+        overrides,
+        tariffInput
+      ),
+    [data.vehicles, overrides, selectedCatalogVehicle, tariffInput]
+  );
+  const tariffSourceLabel = selectedTariff
+    ? `${selectedTariff.source_name}, ${formatDateLabel(selectedTariff.source_date)}`
+    : "User input";
 
   function applyScenario(nextScenarioId: string) {
     const nextScenario =
@@ -274,9 +372,25 @@ export function Dashboard({ data }: DashboardProps) {
     setAnnualMiles(nextScenario.annual_miles);
     setOwnershipYears(nextScenario.ownership_years);
     setHomeShare(nextScenario.home_charging_share_pct);
-    setHomeElectricity(nextScenario.home_electricity_gbp_per_kwh);
     setPetrolPrice(nextScenario.petrol_gbp_per_litre);
     setDieselPrice(nextScenario.diesel_gbp_per_litre);
+  }
+
+  function applyTariff(nextTariffId: string) {
+    setSelectedTariffId(nextTariffId);
+    const nextTariff = data.ev_tariffs.find(
+      (tariff) => tariff.tariff_id === nextTariffId
+    );
+    if (!nextTariff) {
+      return;
+    }
+
+    const nextInput = tariffRateInputFromTariff(nextTariff);
+    setOffPeakRateP(nextInput.offPeakPPerKwh);
+    setPeakRateP(nextInput.peakPPerKwh);
+    setOffPeakShare(nextInput.offPeakSharePct);
+    setStandingChargeP(nextInput.standingChargePPerDay);
+    setStandingAllocation(nextInput.standingChargeAllocationPct);
   }
 
   function askAgent(event: FormEvent<HTMLFormElement>) {
@@ -385,13 +499,16 @@ export function Dashboard({ data }: DashboardProps) {
           onChange={setHomeShare}
         />
         <RangeField
-          label="Home kWh"
-          value={homeElectricity}
-          min={0.12}
-          max={0.5}
-          step={0.01}
-          prefix="GBP "
-          onChange={setHomeElectricity}
+          label="Cheap-rate charge"
+          value={offPeakShare}
+          min={0}
+          max={100}
+          step={1}
+          suffix="%"
+          onChange={(value) => {
+            setSelectedTariffId("custom");
+            setOffPeakShare(value);
+          }}
         />
       </section>
 
@@ -425,13 +542,15 @@ export function Dashboard({ data }: DashboardProps) {
           icon={<BatteryCharging size={22} aria-hidden />}
           label="Blended electricity"
           value={`${money(weightedElectricityPrice(overrides))}/kWh`}
-          detail={`${homeShare}% home charging`}
+          detail={`${homeShare}% home, ${offPeakShare}% cheap-rate`}
         />
         <MetricTile
           icon={<Fuel size={22} aria-hidden />}
           label="Fuel prices"
           value={`${money(petrolPrice)} / ${money(dieselPrice)}`}
-          detail="petrol / diesel per litre"
+          detail={
+            fuelSnapshot ? `petrol / diesel, GOV ${fuelSnapshot.date}` : "petrol / diesel per litre"
+          }
         />
       </section>
 
@@ -487,6 +606,124 @@ export function Dashboard({ data }: DashboardProps) {
               </div>
             ))}
           </div>
+        </article>
+
+        <article className="panel panel-large">
+          <PanelTitle icon={<PlugZap size={18} aria-hidden />} title="UK Tariffs & Fuel" />
+          <div className="tariff-controls">
+            <label className="tariff-field tariff-select">
+              <span>EV tariff</span>
+              <select
+                onChange={(event) => applyTariff(event.target.value)}
+                value={selectedTariffId}
+              >
+                {data.ev_tariffs.map((tariff) => (
+                  <option key={tariff.tariff_id} value={tariff.tariff_id}>
+                    {tariffDisplayName(tariff)}
+                  </option>
+                ))}
+                <option value="custom">Custom rates</option>
+              </select>
+            </label>
+            <NumberField
+              label="Off-peak p/kWh"
+              max={80}
+              min={0}
+              step={0.1}
+              value={offPeakRateP}
+              onChange={(value) => {
+                setSelectedTariffId("custom");
+                setOffPeakRateP(value);
+              }}
+            />
+            <NumberField
+              label="Peak p/kWh"
+              max={90}
+              min={0}
+              step={0.1}
+              value={peakRateP}
+              onChange={(value) => {
+                setSelectedTariffId("custom");
+                setPeakRateP(value);
+              }}
+            />
+            <NumberField
+              label="Standing p/day"
+              max={120}
+              min={0}
+              step={0.1}
+              value={standingChargeP}
+              onChange={(value) => {
+                setSelectedTariffId("custom");
+                setStandingChargeP(value);
+              }}
+            />
+            <NumberField
+              label="Petrol p/litre"
+              max={300}
+              min={80}
+              step={0.1}
+              value={roundForInput(petrolPrice * 100)}
+              onChange={(value) => setPetrolPrice(value / 100)}
+            />
+            <NumberField
+              label="Diesel p/litre"
+              max={320}
+              min={80}
+              step={0.1}
+              value={roundForInput(dieselPrice * 100)}
+              onChange={(value) => setDieselPrice(value / 100)}
+            />
+            <RangeField
+              label="Standing allocation"
+              max={100}
+              min={0}
+              step={5}
+              suffix="%"
+              value={standingAllocation}
+              onChange={setStandingAllocation}
+            />
+          </div>
+          <div className="energy-comparison-grid">
+            {tariffComparisonRows.map((row) => (
+              <div className="energy-card" key={row.vehicle_id}>
+                <span>{row.powertrain}</span>
+                <strong>{row.vehicle}</strong>
+                <b>{money(row.annual_total_cost_gbp)}/yr</b>
+                <small>
+                  {row.pence_per_mile}p/mi - {row.annual_energy_units.toLocaleString("en-GB")}{" "}
+                  {row.energy_unit}
+                </small>
+                {row.annual_standing_cost_gbp > 0 ? (
+                  <em>{money(row.annual_standing_cost_gbp)} standing charge</em>
+                ) : (
+                  <em>{row.unit_rate_label}</em>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="source-strip">
+            {selectedTariff?.source_url ? (
+              <a href={selectedTariff.source_url} rel="noreferrer" target="_blank">
+                {tariffSourceLabel}
+              </a>
+            ) : (
+              <span>{tariffSourceLabel}</span>
+            )}
+            <span>
+              Fuel:{" "}
+              {fuelSnapshot
+                ? `${fuelSnapshot.source_name}, ${fuelSnapshot.date}${fuelSnapshot.stale ? " fallback" : ""}`
+                : "live GOV.UK refresh pending"}
+            </span>
+            <span>
+              Standing:{" "}
+              {selectedTariff?.standing_charge_source ?? "custom user value"}
+            </span>
+          </div>
+          {selectedTariff?.secondary_source_value_note ? (
+            <p className="tariff-note">{selectedTariff.secondary_source_value_note}</p>
+          ) : null}
         </article>
 
         <article className="panel">
@@ -907,6 +1144,36 @@ function RangeField({
   );
 }
 
+function NumberField({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <label className="tariff-field">
+      <span>{label}</span>
+      <input
+        max={max}
+        min={min}
+        onChange={(event) => onChange(Number(event.target.value))}
+        step={step}
+        type="number"
+        value={value}
+      />
+    </label>
+  );
+}
+
 function MetricTile({
   icon,
   label,
@@ -984,6 +1251,23 @@ function formatControlValue(value: number): string {
   return Number.isInteger(value)
     ? value.toLocaleString("en-GB")
     : value.toFixed(2);
+}
+
+function roundForInput(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function formatDateLabel(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 }
 
 function labelise(value: string): string {

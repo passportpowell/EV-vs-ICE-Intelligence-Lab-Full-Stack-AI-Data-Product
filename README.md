@@ -13,6 +13,7 @@ The repo is designed to show full-stack data product work rather than a static d
 - **RAG:** local retrieval over a generated vehicle/scenario/model knowledge corpus, exposed in UI and API.
 - **Trim-aware data modelling:** vehicle catalog tracks make, model, model year, trim, body style, and UK market status.
 - **Data provenance:** overlapping DVLA/catalog values are compared field by field, with conflicts shown side by side by source.
+- **Current UK energy pricing:** EV tariff comparison includes off-peak rates, peak rates, standing charges, source dates, GOV.UK petrol/diesel refresh, and custom user overrides.
 - **Trim matching:** DVLA imports are ranked against local trims with confidence scores and match reasons.
 - **SQL:** reproducible SQLite artifact at `data/processed/ev_ice_comparison.sqlite`.
 - **JavaScript / React / HTML / CSS:** Next.js app router dashboard with custom responsive CSS.
@@ -54,6 +55,7 @@ Raw demo inputs live in `data/raw`:
 
 - `vehicles.csv`: EV, petrol, diesel, and petrol hybrid examples.
 - `energy_prices.csv`: energy price scenarios.
+- `ev_tariffs.csv`: UK EV tariff references with off-peak/peak rates, standing charge scope, source dates, and conflict notes.
 - `grid_intensity.csv`: grid carbon intensity assumptions.
 - `scenario_profiles.csv`: ownership and usage scenarios.
 - `driving_cycles.csv`: speed traces for signal-processing features.
@@ -66,6 +68,7 @@ The build step creates:
 - `data/processed/ev_ice_comparison.sqlite` as the SQL artifact.
 - `rag_corpus` records inside the JSON and SQLite outputs.
 - `source_registry` and `vehicle_source_values` tables inside SQLite for provenance-aware data engineering.
+- `ev_tariffs` records inside JSON and SQLite for tariff-aware running-cost comparison.
 
 The seed data is transparent and replaceable. It is suitable for engineering demonstration, not purchase advice.
 
@@ -79,12 +82,17 @@ GET /api/catalog?year=2021&make=Volkswagen&q=golf
 GET /api/health
 GET /api/comparisons?scenario=mixed_household&annualMiles=12000&ownershipYears=5
 GET /api/comparisons?scenario=high_mileage_fleet&segment=hatchback
+GET /api/tariffs
+GET /api/prices/fuel
+GET /api/energy-comparison?tariffId=intelligent-octopus-go&annualMiles=12000
 GET /api/import/dvla?registration=AB12CDE
 GET /api/rag?q=Which vehicle is best for high mileage emissions?
 GET /api/agent?q=I drive 22000 miles a year and want low running costs
 ```
 
 The comparison endpoint accepts query overrides such as `petrolGbpPerLitre`, `dieselGbpPerLitre`, `homeElectricityGbpPerKwh`, `homeChargingSharePct`, `urbanSharePct`, and `gridGco2ePerKwh`.
+
+The tariff layer is UK-only. `ev_tariffs.csv` seeds current EV tariff references from MoneySavingExpert's EV tariff table, with local transcript notes retained where they agree or conflict. Standing charges are region-specific, so the app shows the source/scope and lets the user enter their own p/day value. `/api/prices/fuel` refreshes average UK petrol and diesel prices from the GOV.UK/DESNZ weekly road fuel CSV and falls back to the latest checked values if the live request fails.
 
 The local catalog is trim-aware and UK-focused for 2016-2026 model years. The DVLA import route can enrich a registration lookup when `DVLA_API_KEY` is configured, but official DVLA vehicle enquiry data does not provide consumer trim packs, so trim matching still needs the local catalog or a commercial specification API.
 
@@ -100,6 +108,7 @@ Current hardening includes:
 
 - Security headers configured in `next.config.ts`.
 - `/api/health` for deployment smoke checks.
+- `/api/prices/fuel` with live refresh and fallback metadata for petrol/diesel prices.
 - Error boundary for dashboard render failures.
 - Request validation, timeout handling, and non-JSON fallback for DVLA import.
 - Dependency audit through `npm run security:audit`.

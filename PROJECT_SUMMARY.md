@@ -4,6 +4,8 @@
 
 EV vs ICE Intelligence Lab is an interactive data product for comparing electric vehicles against petrol, diesel, and petrol hybrid vehicles. It lets a user change ownership assumptions, mileage, charging mix, electricity prices, fuel prices, and usage scenarios, then compares vehicles by total cost of ownership, energy cost, lifecycle CO2e, and break-even mileage.
 
+It now includes a UK tariff and fuel-pricing layer: EV off-peak/peak electricity tariffs, standing charges, GOV.UK petrol/diesel refresh, and custom user-entered rates all feed the running-cost comparison.
+
 The project is intentionally built as a portfolio piece for data, AI, automation, and full-stack engineering roles. It is not just a React page. It includes a reproducible Python data pipeline, generated SQL and JSON artifacts, REST API routes, automated tests, CI/CD configuration, SEO metadata, and a Vercel-ready deployment setup.
 
 ## What A Recruiter Or Hiring Manager Should Notice
@@ -18,6 +20,8 @@ This repo demonstrates:
 - REST API design with server-side API routes.
 - Trim-aware vehicle data modelling across make, model, model year, trim, body style, and UK market status.
 - Source provenance handling for conflicting values between DVLA import data and the local trim catalog.
+- Source provenance for tariff values, including supplier/table notes, transcript-derived notes, and region-specific standing-charge caveats.
+- Live-current price automation through a GOV.UK/DESNZ weekly road fuel CSV endpoint with fallback metadata.
 - Confidence-scored trim matching for imported registration-level data.
 - Production hardening including health checks, security headers, dependency audit, request timeouts, and an error boundary.
 - AI and machine learning through a trained cost-per-mile model.
@@ -39,6 +43,8 @@ Users can:
 - Adjust ownership period.
 - Adjust home charging share.
 - Adjust electricity price.
+- Pick a UK EV electricity tariff or enter custom off-peak, peak, and standing-charge values.
+- Refresh petrol and diesel prices from GOV.UK/DESNZ, then override them manually if needed.
 - Filter by vehicle segment.
 - Compare vehicles on a cost-versus-carbon chart.
 - Review ranked vehicle results.
@@ -63,6 +69,7 @@ Raw inputs live in `data/raw`.
 
 - `vehicles.csv`: curated UK demo vehicle trim records for EV, petrol, diesel, and petrol hybrid vehicles from the 2016-2026 window.
 - `energy_prices.csv`: fuel and electricity price scenarios.
+- `ev_tariffs.csv`: UK EV tariff references including off-peak rates, peak rates, standing charges, source dates, and conflict notes.
 - `grid_intensity.csv`: UK grid carbon-intensity assumptions by year.
 - `scenario_profiles.csv`: usage profiles such as mileage, ownership period, and driving mix.
 - `driving_cycles.csv`: speed traces used for signal-processing features.
@@ -85,6 +92,7 @@ It performs:
 - ML training with scikit-learn using a Random Forest regressor.
 - Feature importance extraction.
 - RAG corpus generation.
+- EV tariff corpus generation with source notes.
 - Trim-aware vehicle catalog generation.
 - JSON artifact generation.
 - SQLite database generation.
@@ -103,6 +111,7 @@ The pipeline generates:
 - `public/data/portfolio-dataset.json`: publicly inspectable dataset.
 - `data/processed/portfolio-dataset.json`: pipeline output artifact.
 - `data/processed/ev_ice_comparison.sqlite`: SQL artifact.
+- `ev_tariffs` table inside SQLite for energy-pricing analysis.
 
 These artifacts show that the project can move data from raw sources into app-ready and database-ready forms.
 
@@ -116,6 +125,9 @@ Important routes:
 - `/api/vehicles`: returns all vehicle records.
 - `/api/scenarios`: returns scenario assumptions.
 - `/api/comparisons`: returns calculated comparison rows and supports query overrides.
+- `/api/tariffs`: returns UK EV tariff references with source metadata.
+- `/api/prices/fuel`: refreshes average UK petrol and diesel prices from the GOV.UK/DESNZ weekly road fuel CSV.
+- `/api/energy-comparison`: compares annual EV electricity cost against petrol and diesel fuel cost using tariff and fuel overrides.
 - `/api/catalog`: returns the local make/model/year/trim catalog.
 - `/api/import/dvla`: imports registration-level facts from DVLA Vehicle Enquiry when `DVLA_API_KEY` is configured.
 - `/api/rag`: returns retrieved knowledge documents for a query.
@@ -126,6 +138,9 @@ Example:
 ```http
 GET /api/comparisons?scenario=mixed_household&annualMiles=12000&ownershipYears=5
 GET /api/catalog
+GET /api/tariffs
+GET /api/prices/fuel
+GET /api/energy-comparison?tariffId=intelligent-octopus-go&annualMiles=12000
 GET /api/import/dvla?registration=AB12CDE
 GET /api/rag?q=Which vehicle is best for high mileage emissions?
 GET /api/agent?q=I drive 22000 miles a year and want low running costs
@@ -143,11 +158,20 @@ The import flow also ranks likely catalog trims. The matcher scores make, fuel t
 
 The catalog filters use availability windows. This avoids the false impression that a trim only exists in its representative `model_year`; a 2016-2026 availability span is searchable year by year.
 
+## UK Tariffs And Fuel Prices
+
+The tariff feature uses `data/raw/ev_tariffs.csv` as a transparent seed dataset. It includes tariffs such as Intelligent Octopus Go, Octopus Go, EDF GoElectric, E.ON Next Drive, OVO Charge Anytime, British Gas EV Power, So Energy, Scottish Power, Good Energy, and Utility Warehouse.
+
+Each tariff row keeps off-peak p/kWh, peak p/kWh where applicable, off-peak window, standing charge p/day, standing-charge scope, compatibility requirements, exit fees, source URL, source date, and secondary source notes. Where values differ between the current tariff table and the supplied transcript, the app keeps both notes visible rather than merging them into one unlabelled value.
+
+Fuel prices are handled separately because they change frequently. `/api/prices/fuel` fetches the current GOV.UK/DESNZ weekly road fuel CSV at request time, returns petrol and diesel in pence/litre and GBP/litre, and includes the source URL, date, and whether fallback values were used.
+
 ## Production Readiness Pass
 
 The project includes several deployment-oriented safeguards:
 
 - `/api/health` returns dataset, catalog, source, and RAG counts for smoke checks.
+- `/api/prices/fuel` returns live/fallback metadata so deployments can degrade gracefully when GOV.UK is unavailable.
 - `next.config.ts` sets basic security headers and disables the powered-by header.
 - DVLA import validates registration-like input, times out upstream requests, and handles non-JSON upstream failures.
 - `src/app/error.tsx` provides a user-facing recovery boundary.

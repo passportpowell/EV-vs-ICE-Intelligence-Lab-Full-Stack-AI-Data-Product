@@ -43,6 +43,34 @@ export type Scenario = {
   home_charging_share_pct: number;
 };
 
+export type EvTariff = {
+  tariff_id: string;
+  supplier: string;
+  tariff_name: string;
+  tariff_category: "time_of_use" | "smart_charging_add_on";
+  off_peak_start: string;
+  off_peak_end: string;
+  off_peak_hours: number;
+  off_peak_min_p_per_kwh: number;
+  off_peak_max_p_per_kwh: number;
+  default_off_peak_p_per_kwh: number;
+  peak_p_per_kwh: number | null;
+  standing_charge_p_per_day: number;
+  standing_charge_source: string;
+  standing_charge_scope: string;
+  exit_fee_gbp_per_fuel: number;
+  requires_smart_meter: boolean;
+  requires_compatible_car_or_charger: boolean;
+  applies_to_whole_home: boolean;
+  fixed_or_variable: "fixed" | "variable";
+  source_name: string;
+  source_url: string;
+  source_date: string;
+  secondary_source_name: string | null;
+  secondary_source_value_note: string | null;
+  notes: string;
+};
+
 export type ScenarioResult = {
   scenario_id: string;
   vehicle_id: string;
@@ -167,6 +195,7 @@ export type PortfolioDataset = {
   };
   assumptions: Record<string, string | number>;
   vehicles: Vehicle[];
+  ev_tariffs: EvTariff[];
   scenarios: Scenario[];
   scenario_results: ScenarioResult[];
   powertrain_summary: PowertrainSummary[];
@@ -188,4 +217,43 @@ export type ScenarioOverrides = {
   publicRapidGbpPerKwh: number;
   homeChargingSharePct: number;
   gridGco2ePerKwh: number;
+  evStandingChargeGbpPerDay?: number;
+  standingChargeAllocationPct?: number;
+};
+
+export type TariffRateInput = {
+  offPeakPPerKwh: number;
+  peakPPerKwh: number;
+  offPeakSharePct: number;
+  standingChargePPerDay: number;
+  standingChargeAllocationPct: number;
+};
+
+export type EnergyComparisonRow = {
+  vehicle_id: string;
+  vehicle: string;
+  powertrain: string;
+  fuel_type: FuelType;
+  annual_energy_units: number;
+  energy_unit: "kWh" | "litres";
+  annual_unit_cost_gbp: number;
+  annual_standing_cost_gbp: number;
+  annual_total_cost_gbp: number;
+  pence_per_mile: number;
+  unit_rate_label: string;
+};
+
+export type FuelPriceSnapshot = {
+  date: string;
+  petrol_p_per_litre: number;
+  diesel_p_per_litre: number;
+  petrol_gbp_per_litre: number;
+  diesel_gbp_per_litre: number;
+  duty_p_per_litre: number;
+  vat_pct: number;
+  source_name: string;
+  source_url: string;
+  fetched_at: string;
+  stale: boolean;
+  note: string;
 };
