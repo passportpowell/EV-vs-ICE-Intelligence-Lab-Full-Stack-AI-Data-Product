@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install web dependencies
+        run: npm ci
+
+      - name: Build data artifacts
+        run: npm run data:build
+
+      - name: Test Python pipeline
+        run: npm run data:test
+
+      - name: Lint web app
+        run: npm run lint
+
+      - name: Test TypeScript calculations
+        run: npm run test
+
+      - name: Build Next.js app
+        run: npm run build

@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests/python"]
+addopts = "-p no:cacheprovider -p no:asyncio"

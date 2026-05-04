@@ -1,0 +1,6 @@
+price_scenario_id,price_scenario_name,petrol_gbp_per_litre,diesel_gbp_per_litre,home_electricity_gbp_per_kwh,public_rapid_gbp_per_kwh,home_charging_share_pct
+base_2026,Balanced 2026,1.46,1.52,0.27,0.79,72
+cheap_home,Home Charging Advantage,1.46,1.52,0.22,0.72,88
+public_heavy,Public Charging Heavy,1.46,1.52,0.28,0.84,35
+fuel_shock,Fuel Price Shock,1.72,1.82,0.29,0.81,72
+low_carbon_power,Low Carbon Power,1.46,1.52,0.24,0.68,76

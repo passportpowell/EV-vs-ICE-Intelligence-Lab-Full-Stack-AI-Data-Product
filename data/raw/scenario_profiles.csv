@@ -1,0 +1,6 @@
+scenario_id,label,annual_miles,ownership_years,urban_share_pct,motorway_share_pct,grid_year,price_scenario_id
+city_commuter,City commuter,8000,4,68,14,2026,cheap_home
+mixed_household,Mixed household,12000,5,42,34,2026,base_2026
+high_mileage_fleet,High mileage fleet,22000,4,28,56,2027,fuel_shock
+public_charging_renter,Public charging renter,10000,5,50,28,2026,public_heavy
+decarbonised_2030,2030 decarbonised grid,12000,7,38,36,2030,low_carbon_power
