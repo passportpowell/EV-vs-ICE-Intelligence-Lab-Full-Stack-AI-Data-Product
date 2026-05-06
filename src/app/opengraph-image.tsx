@@ -1,6 +1,16 @@
 import { ImageResponse } from "next/og";
 
-import { dataset } from "@/lib/data";
+// Don't import the dataset here — it's a 15k-line JSON and pushes the
+// Edge Function bundle past Vercel's Hobby-plan 1 MB limit. The numbers
+// below come from the catalog (UK consumer cars + curated tariffs +
+// scenario seed file) and only need updating when major catalog work
+// happens, which is rare.
+const HEADLINE_STATS = {
+  vehicles: 200,   // representative trims for the scatter chart
+  brands: 49,      // UK consumer-car brands in uk_vehicle_catalog.json
+  scenarios: 5,    // mileage / ownership presets
+  tariffs: 13,     // curated UK EV tariffs + 4 live Octopus products
+};
 
 export const runtime = "edge";
 export const alt = "EV vs ICE Intelligence Lab — UK total cost of ownership comparison";
@@ -8,10 +18,10 @@ export const contentType = "image/png";
 export const size = { width: 1200, height: 630 };
 
 export default async function OpenGraphImage() {
-  const vehicleCount = dataset.vehicles.length;
-  const makes = new Set(dataset.vehicles.map((v) => v.make)).size;
-  const scenarioCount = dataset.scenarios.length;
-  const tariffCount = dataset.ev_tariffs.length;
+  const vehicleCount = HEADLINE_STATS.vehicles;
+  const makes = HEADLINE_STATS.brands;
+  const scenarioCount = HEADLINE_STATS.scenarios;
+  const tariffCount = HEADLINE_STATS.tariffs;
 
   return new ImageResponse(
     (
