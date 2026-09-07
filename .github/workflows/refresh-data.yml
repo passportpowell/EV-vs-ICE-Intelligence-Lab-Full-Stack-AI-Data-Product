@@ -28,7 +28,19 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          df -h
 
+      - name: Install Python dependencies
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -r requirements.txt
       - name: Install Python dependencies
         run: |
           pip install --index-url https://download.pytorch.org/whl/cpu torch
