@@ -113,11 +113,15 @@ export function ChargingMap({ cvModel }: ChargingMapProps) {
         center: [54.6, -3.5],
         zoom: 5,
       });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18,
-      }).addTo(mapRef.current);
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          maxZoom: 19,
+          subdomains: "abcd",
+        }
+      ).addTo(mapRef.current);
       layerRef.current = L.layerGroup().addTo(mapRef.current);
     }
 
@@ -173,8 +177,35 @@ export function ChargingMap({ cvModel }: ChargingMapProps) {
     [activeCvSampleUrl, cvSamples]
   );
 
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCvError(null);
+    setCvPrediction(null);
+    try {
+      const url = URL.createObjectURL(file);
+      setUploadedImageUrl(url);
+      setActiveCvSampleUrl("");
+      const response = await fetch("/api/cv/classify-connector", {
+        method: "POST",
+        headers: { "Content-Type": "image/png" },
+        body: file,
+      });
+      if (!response.ok) {
+        const errJson = await response.json().catch(() => ({}));
+        throw new Error(errJson.error ?? `Upload classification failed (${response.status})`);
+      }
+      const data = (await response.json()) as LiveCvPrediction;
+      setCvPrediction(data);
+    } catch (err: unknown) {
+      setCvError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
   useEffect(() => {
-    if (!activeCvSample) return;
+    if (!activeCvSample || !activeCvSampleUrl) return;
     let active = true;
     const sampleId = activeCvSample.url
       .split("/")
@@ -199,7 +230,7 @@ export function ChargingMap({ cvModel }: ChargingMapProps) {
     return () => {
       active = false;
     };
-  }, [activeCvSample]);
+  }, [activeCvSample, activeCvSampleUrl]);
 
   const sortedCvProbs = useMemo(() => {
     if (!cvPrediction) return [];
@@ -322,7 +353,10 @@ export function ChargingMap({ cvModel }: ChargingMapProps) {
                       : "connector-sample"
                   }
                   key={sample.url}
-                  onClick={() => setActiveCvSampleUrl(sample.url)}
+                  onClick={() => {
+                    setUploadedImageUrl(null);
+                    setActiveCvSampleUrl(sample.url);
+                  }}
                   type="button"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -335,6 +369,17 @@ export function ChargingMap({ cvModel }: ChargingMapProps) {
                   <span>{sample.label}</span>
                 </button>
               ))}
+
+              <label className="connector-sample connector-upload-btn" title="Upload a PNG image of an EV connector to test ONNX model inference">
+                <input
+                  type="file"
+                  accept="image/png"
+                  onChange={handleFileUpload}
+                  style={{ display: "none" }}
+                />
+                <span className="upload-icon">+</span>
+                <span>Upload PNG</span>
+              </label>
             </div>
             <div className="connector-prediction">
               {cvError ? (
@@ -342,12 +387,24 @@ export function ChargingMap({ cvModel }: ChargingMapProps) {
               ) : cvPrediction ? (
                 <>
                   <div className="connector-headline">
-                    <span>Top prediction</span>
-                    <strong>{cvPrediction.predicted}</strong>
-                    <em>
-                      {(cvPrediction.confidence * 100).toFixed(1)}% ·{" "}
-                      {cvPrediction.inference_ms.toFixed(1)} ms inference
-                    </em>
+                    {uploadedImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={uploadedImageUrl}
+                        alt="Uploaded connector preview"
+                        className="connector-uploaded-preview"
+                        width={44}
+                        height={44}
+                      />
+                    ) : null}
+                    <div>
+                      <span>Top prediction</span>
+                      <strong>{cvPrediction.predicted}</strong>
+                      <em>
+                        {(cvPrediction.confidence * 100).toFixed(1)}% ·{" "}
+                        {cvPrediction.inference_ms.toFixed(1)} ms inference
+                      </em>
+                    </div>
                   </div>
                   <ul className="cv-probs">
                     {sortedCvProbs.map(([label, prob]) => (

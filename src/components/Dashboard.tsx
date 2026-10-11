@@ -12,7 +12,8 @@ import {
   Leaf,
   ListChecks,
   PlugZap,
-  Search
+  Search,
+  Info
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -28,6 +29,7 @@ import {
   YAxis
 } from "recharts";
 
+import { ArchitectureModal } from "@/components/ArchitectureModal";
 import { ChargingMap } from "@/components/ChargingMap";
 import {
   VehicleFinder,
@@ -247,6 +249,7 @@ export function Dashboard({ data }: DashboardProps) {
   // agentQuestion stays empty until the user actually asks — that way the
   // panel doesn't auto-render a pre-canned answer on first paint.
   const [agentQuestion, setAgentQuestion] = useState("");
+  const [isArchModalOpen, setIsArchModalOpen] = useState(false);
   const [selectedVehicleId, setSelectedVehicleId] = useState(
     data.vehicles[0]?.id ?? ""
   );
@@ -652,6 +655,15 @@ export function Dashboard({ data }: DashboardProps) {
           <h1>EV vs ICE Intelligence Lab</h1>
         </div>
         <div className="topbar-actions" aria-label="Project capabilities">
+          <button
+            type="button"
+            className="topbar-arch-btn"
+            onClick={() => setIsArchModalOpen(true)}
+            title="Inspect Data & ML Pipeline Architecture"
+          >
+            <Info size={16} aria-hidden />
+            Architecture &amp; Pipeline
+          </button>
           <span>
             <Database size={16} aria-hidden />
             SQL
@@ -670,6 +682,12 @@ export function Dashboard({ data }: DashboardProps) {
           </a>
         </div>
       </header>
+
+      <div className="hero-narrative-banner">
+        <p>
+          UK Total Cost of Ownership &amp; Carbon Intelligence Engine — Powered by Scikit-Learn regression, DESNZ live weekly pump prices, National Grid ESO real-time carbon intensity, and an ONNX connector classifier.
+        </p>
+      </div>
 
       <section className="control-band" aria-label="Comparison controls">
         <label className="control-field">
@@ -726,6 +744,58 @@ export function Dashboard({ data }: DashboardProps) {
           }}
         />
       </section>
+
+      <div className="driver-archetype-bar" aria-label="Driver profile presets">
+        <span className="archetype-label">Quick presets:</span>
+        <button
+          type="button"
+          className="archetype-btn"
+          onClick={() => {
+            setAnnualMiles(7400);
+            setOwnershipYears(4);
+            setHomeShare(85);
+            setOffPeakShare(80);
+          }}
+        >
+          UK Average Driver (7.4k mi · 85% home)
+        </button>
+        <button
+          type="button"
+          className="archetype-btn"
+          onClick={() => {
+            setAnnualMiles(18000);
+            setOwnershipYears(3);
+            setHomeShare(60);
+            setOffPeakShare(70);
+          }}
+        >
+          Fleet / High-Mileage (18k mi)
+        </button>
+        <button
+          type="button"
+          className="archetype-btn"
+          onClick={() => {
+            setAnnualMiles(4500);
+            setOwnershipYears(6);
+            setHomeShare(95);
+            setOffPeakShare(90);
+          }}
+        >
+          City Runabout (4.5k mi · 95% home)
+        </button>
+        <button
+          type="button"
+          className="archetype-btn"
+          onClick={() => {
+            setAnnualMiles(10000);
+            setOwnershipYears(4);
+            setHomeShare(0);
+            setOffPeakShare(0);
+          }}
+        >
+          Public Charger Only (0% home)
+        </button>
+      </div>
 
       <nav className="segment-tabs" aria-label="Vehicle segment">
         {segments.map((item) => (
@@ -810,7 +880,22 @@ export function Dashboard({ data }: DashboardProps) {
                   type="number"
                 />
                 <Tooltip content={<VehicleTooltip />} />
-                <Scatter data={rows} name="Vehicles">
+                <Scatter
+                  data={rows}
+                  name="Vehicles"
+                  cursor="pointer"
+                  onClick={(node) => {
+                    const payload = node?.payload as ScenarioResult | undefined;
+                    if (!payload) return;
+                    setSelectedVehicleId(payload.vehicle_id);
+                    setYourVehicle({
+                      make: payload.make,
+                      year: payload.model_year,
+                      model: payload.model,
+                      powertrain: payload.powertrain as "EV" | "ICE" | "Hybrid" | "Mixed",
+                    });
+                  }}
+                >
                   {rows.map((entry) => (
                     <Cell
                       fill={POWERTRAIN_COLORS[entry.powertrain] ?? "#334155"}
@@ -1391,6 +1476,11 @@ export function Dashboard({ data }: DashboardProps) {
         </article>
 
       </section>
+
+      <ArchitectureModal
+        isOpen={isArchModalOpen}
+        onClose={() => setIsArchModalOpen(false)}
+      />
     </main>
   );
 }
