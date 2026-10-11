@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-05T12:08:37.389914+00:00",
+  "generated_at": "2026-10-11T11:48:17.469618+00:00",
   "project": {
     "name": "EV vs ICE Intelligence Lab",
     "slug": "ev-ice-intelligence-lab",
@@ -52473,7 +52473,7 @@
         "scikit-learn",
         "model"
       ],
-      "content": "The ML model predicts total cost per mile using a scikit-learn RandomForestRegressor. It trains on 120000 synthetic scenario rows and evaluates on 28800 test rows. R2 is 1.0 and MAE is GBP 0.004 per mile. Top features are annual_miles (0.4633), purchase_price_gbp (0.4502), ownership_years (0.0685), efficiency_value (0.0055), annual_maintenance_gbp (0.0044), weighted_electricity_gbp_per_kwh (0.0017).",
+      "content": "The ML model predicts total cost per mile using a scikit-learn RandomForestRegressor. It trains on 120000 synthetic scenario rows and evaluates on 28800 test rows. R2 is 1.0 and MAE is GBP 0.004 per mile. Top features are annual_miles (0.4627), purchase_price_gbp (0.4509), ownership_years (0.0685), efficiency_value (0.0055), annual_maintenance_gbp (0.0043), weighted_electricity_gbp_per_kwh (0.0017).",
       "source": "pipeline/ev_ice_pipeline/build.py",
       "metadata": {},
       "semantic_neighbours": [
@@ -52623,11 +52623,11 @@
         "i": 8,
         "idf": 5.80402
       },
-      "0044": {
+      "0043": {
         "i": 9,
         "idf": 5.80402
       },
-      "0044 weighted_electricity_gbp_per_kwh": {
+      "0043 weighted_electricity_gbp_per_kwh": {
         "i": 10,
         "idf": 5.80402
       },
@@ -55651,11 +55651,11 @@
         "i": 765,
         "idf": 5.39856
       },
-      "4502": {
+      "4509": {
         "i": 766,
         "idf": 5.80402
       },
-      "4502 ownership_years": {
+      "4509 ownership_years": {
         "i": 767,
         "idf": 5.80402
       },
@@ -55715,11 +55715,11 @@
         "i": 781,
         "idf": 5.80402
       },
-      "4633": {
+      "4627": {
         "i": 782,
         "idf": 5.80402
       },
-      "4633 purchase_price_gbp": {
+      "4627 purchase_price_gbp": {
         "i": 783,
         "idf": 5.80402
       },
@@ -57715,7 +57715,7 @@
         "i": 1281,
         "idf": 5.80402
       },
-      "annual_maintenance_gbp 0044": {
+      "annual_maintenance_gbp 0043": {
         "i": 1282,
         "idf": 5.80402
       },
@@ -57723,7 +57723,7 @@
         "i": 1283,
         "idf": 5.80402
       },
-      "annual_miles 4633": {
+      "annual_miles 4627": {
         "i": 1284,
         "idf": 5.80402
       },
@@ -64863,7 +64863,7 @@
         "i": 3068,
         "idf": 5.80402
       },
-      "purchase_price_gbp 4502": {
+      "purchase_price_gbp 4509": {
         "i": 3069,
         "idf": 5.80402
       },
@@ -67540,11 +67540,11 @@
     "feature_importance": [
       {
         "feature": "annual_miles",
-        "importance": 0.4633
+        "importance": 0.4627
       },
       {
         "feature": "purchase_price_gbp",
-        "importance": 0.4502
+        "importance": 0.4509
       },
       {
         "feature": "ownership_years",
@@ -67556,7 +67556,7 @@
       },
       {
         "feature": "annual_maintenance_gbp",
-        "importance": 0.0044
+        "importance": 0.0043
       },
       {
         "feature": "weighted_electricity_gbp_per_kwh",
@@ -67574,33 +67574,33 @@
     "permutation_importance": [
       {
         "feature": "annual_miles",
-        "mean": 1.1103,
-        "std": 0.0103
+        "mean": 1.1058,
+        "std": 0.0641
       },
       {
         "feature": "purchase_price_gbp",
-        "mean": 0.935,
-        "std": 0.0085
+        "mean": 0.8807,
+        "std": 0.0296
       },
       {
         "feature": "ownership_years",
-        "mean": 0.1403,
-        "std": 0.0016
+        "mean": 0.1388,
+        "std": 0.0056
       },
       {
         "feature": "annual_maintenance_gbp",
-        "mean": 0.007,
-        "std": 0.0001
+        "mean": 0.0058,
+        "std": 0.0003
       },
       {
         "feature": "efficiency_value",
-        "mean": 0.0037,
-        "std": 0.0001
+        "mean": 0.0039,
+        "std": 0.0002
       },
       {
-        "feature": "battery_kwh",
-        "mean": 0.0025,
-        "std": 0.0
+        "feature": "weighted_electricity_gbp_per_kwh",
+        "mean": 0.0021,
+        "std": 0.0001
       }
     ],
     "sample_predictions": [
@@ -67623,7 +67623,7 @@
         "diesel_gbp_per_litre": 2.1,
         "weighted_electricity_gbp_per_kwh": 0.436,
         "actual_cost_per_mile_gbp": 0.658,
-        "predicted_cost_per_mile_gbp": 0.644
+        "predicted_cost_per_mile_gbp": 0.645
       },
       {
         "segment": "crossover",
@@ -67665,7 +67665,7 @@
         "diesel_gbp_per_litre": 1.9,
         "weighted_electricity_gbp_per_kwh": 0.416,
         "actual_cost_per_mile_gbp": 0.859,
-        "predicted_cost_per_mile_gbp": 0.861
+        "predicted_cost_per_mile_gbp": 0.86
       },
       {
         "segment": "hatchback",
@@ -67728,7 +67728,7 @@
         "diesel_gbp_per_litre": 1.9,
         "weighted_electricity_gbp_per_kwh": 0.416,
         "actual_cost_per_mile_gbp": 1.241,
-        "predicted_cost_per_mile_gbp": 1.241
+        "predicted_cost_per_mile_gbp": 1.242
       },
       {
         "segment": "supermini",
@@ -67770,7 +67770,7 @@
         "diesel_gbp_per_litre": 1.9,
         "weighted_electricity_gbp_per_kwh": 0.644,
         "actual_cost_per_mile_gbp": 1.096,
-        "predicted_cost_per_mile_gbp": 1.092
+        "predicted_cost_per_mile_gbp": 1.093
       }
     ]
   },

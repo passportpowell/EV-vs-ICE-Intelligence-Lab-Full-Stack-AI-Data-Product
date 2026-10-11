@@ -3,6 +3,7 @@ import Script from "next/script";
 import type { ReactNode } from "react";
 
 import { dataset } from "@/lib/data";
+import { Footer } from "@/components/Footer";
 
 import "./globals.css";
 
@@ -155,6 +156,7 @@ export default function RootLayout({
     <html lang="en-GB">
       <body>
         {children}
+        <Footer />
         <Script
           id="ld-software"
           type="application/ld+json"

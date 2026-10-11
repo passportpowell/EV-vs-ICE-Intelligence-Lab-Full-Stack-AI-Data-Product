@@ -3013,3 +3013,54 @@ td span {
     font-size: 1.5rem;
   }
 }
+
+/* ===== Site Footer ===== */
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  padding: 24px 0;
+  margin-top: 48px;
+}
+
+.site-footer-inner {
+  width: min(1480px, calc(100% - 28px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.site-footer-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.site-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-footer-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  padding: 6px;
+  border-radius: var(--radius-xs);
+  transition: color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+.site-footer-icon-link:hover {
+  color: var(--ink);
+  background-color: var(--surface-strong);
+  transform: translateY(-1px);
+}
+
+.site-footer-github-icon {
+  display: block;
+}
+

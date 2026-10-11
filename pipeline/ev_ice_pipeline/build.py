@@ -855,7 +855,7 @@ def train_cost_model(inputs: dict[str, pd.DataFrame]) -> dict[str, Any]:
             (
                 "model",
                 RandomForestRegressor(
-                    n_estimators=260,
+                    n_estimators=120,
                     min_samples_leaf=3,
                     random_state=42,
                     n_jobs=-1,
@@ -880,20 +880,18 @@ def train_cost_model(inputs: dict[str, pd.DataFrame]) -> dict[str, Any]:
     sample["actual_cost_per_mile_gbp"] = y_test.head(8).to_numpy()
     sample["predicted_cost_per_mile_gbp"] = sample_predictions
 
-    # Model-agnostic permutation feature importance over the *raw* input
-    # columns. Built-in tree importances reward columns the splitter happens
-    # to use early; permutation importance shuffles each column and measures
-    # how much the test R2 actually drops, which is what stakeholders care
-    # about. We use the wrapped ColumnTransformer-backed pipeline so
-    # categorical / numeric columns share a comparable scale.
+    # Model-agnostic permutation feature importance over a representative test sample.
+    # We set n_jobs=1 to avoid multi-process serialization into /dev/shm (preventing ENOSPC
+    # in CI runner environments) and evaluate on max_samples=2000 for sub-second, robust ranking.
     perm = permutation_importance(
         model,
         x_test,
         y_test,
-        n_repeats=10,
+        n_repeats=5,
         random_state=42,
         scoring="r2",
-        n_jobs=-1,
+        max_samples=2000,
+        n_jobs=1,
     )
     perm_summary = sorted(
         zip(x_test.columns, perm.importances_mean, perm.importances_std, strict=True),

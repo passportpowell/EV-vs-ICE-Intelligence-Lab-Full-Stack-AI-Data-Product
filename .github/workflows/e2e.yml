@@ -11,6 +11,9 @@ jobs:
   playwright:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      JOBLIB_TEMP_FOLDER: /tmp
+      DISABLE_PANDERA_IMPORT_WARNING: "True"
 
     steps:
       - name: Checkout

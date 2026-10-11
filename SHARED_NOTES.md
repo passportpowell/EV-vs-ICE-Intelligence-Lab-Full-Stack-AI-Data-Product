@@ -1,0 +1,4 @@
+# Session Log
+
+2026-10-11T11:42Z | Antigravity / Gemini 3.8 Flash | Switched repo to handoff protocol, installed project skills, diagnosed workflow failure (joblib OSError ENOSPC in permutation_importance).
+2026-10-11T12:15Z | Antigravity / Gemini 3.8 Flash | Fixed joblib ENOSPC leak in pipeline build.py (n_jobs=1, max_samples=2000), added JOBLIB_TEMP_FOLDER=/tmp in CI workflows, added global rule compliant footer with GitHub icon linking to passportpowell.com/card, verified pytest/vitest/lint passed cleanly.
