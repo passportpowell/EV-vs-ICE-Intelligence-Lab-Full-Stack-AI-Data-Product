@@ -14,7 +14,7 @@ type LeafletNamespace = {
   ) => LeafletMap;
   tileLayer: (
     url: string,
-    opts?: { attribution?: string; maxZoom?: number }
+    opts?: { attribution?: string; maxZoom?: number; subdomains?: string; [key: string]: unknown }
   ) => { addTo: (map: LeafletMap) => void };
   circleMarker: (
     latlng: [number, number],

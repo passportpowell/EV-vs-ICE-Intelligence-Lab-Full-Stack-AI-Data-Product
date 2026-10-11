@@ -69,6 +69,7 @@ import type {
   PortfolioDataset,
   Scenario,
   ScenarioOverrides,
+  ScenarioResult,
   FuelPriceSnapshot,
   TariffRateInput,
   Vehicle
