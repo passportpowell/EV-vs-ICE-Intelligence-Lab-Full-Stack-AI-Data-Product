@@ -18,13 +18,13 @@ test.describe("Dashboard happy path", () => {
       page.getByRole("heading", { name: "Cost vs Lifecycle CO2e" })
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Trim-Aware Catalog" })
+      page.getByRole("heading", { name: "Pick a vehicle & compare" })
     ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: "UK Charging Coverage" })
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Agentic RAG Advisor" })
+      page.getByRole("heading", { name: "Ask the dataset" })
     ).toBeVisible();
   });
 
