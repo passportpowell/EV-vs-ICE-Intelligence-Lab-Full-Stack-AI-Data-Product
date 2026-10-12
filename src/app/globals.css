@@ -3103,6 +3103,28 @@ td span {
   color: #ffffff;
 }
 
+.topbar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.topbar-action-btn:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+  background: var(--surface-strong);
+  transform: translateY(-1px);
+}
+
 /* ===== Driver Archetype Presets ===== */
 .driver-archetype-bar {
   display: flex;

@@ -13,7 +13,9 @@ import {
   ListChecks,
   PlugZap,
   Search,
-  Info
+  Info,
+  Download,
+  Share2
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -648,6 +650,58 @@ export function Dashboard({ data }: DashboardProps) {
     }
   }
 
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  function copyScenarioLink() {
+    if (typeof window === "undefined") return;
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  }
+
+  function exportComparisonCsv() {
+    const headers = [
+      "Vehicle",
+      "Model Year",
+      "Powertrain",
+      "Segment",
+      "Cost Per Mile (GBP)",
+      "Lifecycle CO2e (tonnes)",
+      "Annual Cost (GBP)",
+      "Purchase Price (GBP)",
+      "Efficiency",
+    ];
+    const csvRows = [
+      headers.join(","),
+      ...rows.map((r) => {
+        const v = data.vehicles.find((veh) => veh.id === r.vehicle_id);
+        const purchasePrice = v?.purchase_price_gbp ?? "n/a";
+        return [
+          `"${r.make} ${r.model} ${r.trim}"`,
+          r.model_year,
+          r.powertrain,
+          r.segment,
+          r.total_cost_per_mile_gbp.toFixed(3),
+          r.lifecycle_tonnes_co2e.toFixed(2),
+          r.annual_energy_cost_gbp.toFixed(2),
+          purchasePrice,
+          r.adjusted_efficiency.toFixed(2),
+        ].join(",");
+      }),
+    ];
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `ev-vs-ice-${scenario.scenario_id}-${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   return (
     <main className="dashboard-shell">
       <header className="topbar">
@@ -677,6 +731,24 @@ export function Dashboard({ data }: DashboardProps) {
             <GitBranch size={16} aria-hidden />
             CI/CD
           </span>
+          <button
+            type="button"
+            className="topbar-action-btn"
+            onClick={copyScenarioLink}
+            title="Copy current scenario URL to clipboard"
+          >
+            <Share2 size={16} aria-hidden />
+            {copiedLink ? "Copied!" : "Share"}
+          </button>
+          <button
+            type="button"
+            className="topbar-action-btn"
+            onClick={exportComparisonCsv}
+            title="Export filtered vehicle comparison data as CSV"
+          >
+            <Download size={16} aria-hidden />
+            Export CSV
+          </button>
           <a className="topbar-link" href="/api/docs">
             <Database size={16} aria-hidden />
             API docs
