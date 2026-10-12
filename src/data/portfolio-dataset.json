@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-11T11:48:17.469618+00:00",
+  "generated_at": "2026-10-12T11:18:57.404169+00:00",
   "project": {
     "name": "EV vs ICE Intelligence Lab",
     "slug": "ev-ice-intelligence-lab",
@@ -44096,11 +44096,11 @@
       ],
       "tfidf_vector": {
         "2669": 0.28022,
-        "768": 0.27886,
+        "766": 0.27886,
         "3219": 0.27886,
         "2675": 0.27886,
         "3218": 0.27886,
-        "769": 0.27886,
+        "767": 0.27886,
         "3030": 0.18893,
         "3424": 0.18537,
         "995": 0.1647,
@@ -52473,7 +52473,7 @@
         "scikit-learn",
         "model"
       ],
-      "content": "The ML model predicts total cost per mile using a scikit-learn RandomForestRegressor. It trains on 120000 synthetic scenario rows and evaluates on 28800 test rows. R2 is 1.0 and MAE is GBP 0.004 per mile. Top features are annual_miles (0.4627), purchase_price_gbp (0.4509), ownership_years (0.0685), efficiency_value (0.0055), annual_maintenance_gbp (0.0043), weighted_electricity_gbp_per_kwh (0.0017).",
+      "content": "The ML model predicts total cost per mile using a scikit-learn RandomForestRegressor. It trains on 120000 synthetic scenario rows and evaluates on 28800 test rows. R2 is 1.0 and MAE is GBP 0.004 per mile. Top features are annual_miles (0.4627), purchase_price_gbp (0.451), ownership_years (0.0685), efficiency_value (0.0053), annual_maintenance_gbp (0.0043), weighted_electricity_gbp_per_kwh (0.0017).",
       "source": "pipeline/ev_ice_pipeline/build.py",
       "metadata": {},
       "semantic_neighbours": [
@@ -52506,7 +52506,7 @@
         "2790": 0.10288,
         "8": 0.10288,
         "2909": 0.10288,
-        "767": 0.10288,
+        "769": 0.10288,
         "3677": 0.10288,
         "10": 0.10288,
         "1282": 0.10288,
@@ -52631,11 +52631,11 @@
         "i": 10,
         "idf": 5.80402
       },
-      "0055": {
+      "0053": {
         "i": 11,
         "idf": 5.80402
       },
-      "0055 annual_maintenance_gbp": {
+      "0053 annual_maintenance_gbp": {
         "i": 12,
         "idf": 5.80402
       },
@@ -55651,19 +55651,19 @@
         "i": 765,
         "idf": 5.39856
       },
-      "4509": {
+      "450e": {
         "i": 766,
         "idf": 5.80402
       },
-      "4509 ownership_years": {
+      "450e premium": {
         "i": 767,
         "idf": 5.80402
       },
-      "450e": {
+      "451": {
         "i": 768,
         "idf": 5.80402
       },
-      "450e premium": {
+      "451 ownership_years": {
         "i": 769,
         "idf": 5.80402
       },
@@ -59727,7 +59727,7 @@
         "i": 1784,
         "idf": 5.80402
       },
-      "efficiency_value 0055": {
+      "efficiency_value 0053": {
         "i": 1785,
         "idf": 5.80402
       },
@@ -64863,7 +64863,7 @@
         "i": 3068,
         "idf": 5.80402
       },
-      "purchase_price_gbp 4509": {
+      "purchase_price_gbp 451": {
         "i": 3069,
         "idf": 5.80402
       },
@@ -67544,7 +67544,7 @@
       },
       {
         "feature": "purchase_price_gbp",
-        "importance": 0.4509
+        "importance": 0.451
       },
       {
         "feature": "ownership_years",
@@ -67552,7 +67552,7 @@
       },
       {
         "feature": "efficiency_value",
-        "importance": 0.0055
+        "importance": 0.0053
       },
       {
         "feature": "annual_maintenance_gbp",
@@ -67579,8 +67579,8 @@
       },
       {
         "feature": "purchase_price_gbp",
-        "mean": 0.8807,
-        "std": 0.0296
+        "mean": 0.8821,
+        "std": 0.0295
       },
       {
         "feature": "ownership_years",
@@ -67589,12 +67589,12 @@
       },
       {
         "feature": "annual_maintenance_gbp",
-        "mean": 0.0058,
+        "mean": 0.0059,
         "std": 0.0003
       },
       {
         "feature": "efficiency_value",
-        "mean": 0.0039,
+        "mean": 0.0038,
         "std": 0.0002
       },
       {
@@ -67665,7 +67665,7 @@
         "diesel_gbp_per_litre": 1.9,
         "weighted_electricity_gbp_per_kwh": 0.416,
         "actual_cost_per_mile_gbp": 0.859,
-        "predicted_cost_per_mile_gbp": 0.86
+        "predicted_cost_per_mile_gbp": 0.861
       },
       {
         "segment": "hatchback",
@@ -67728,7 +67728,7 @@
         "diesel_gbp_per_litre": 1.9,
         "weighted_electricity_gbp_per_kwh": 0.416,
         "actual_cost_per_mile_gbp": 1.241,
-        "predicted_cost_per_mile_gbp": 1.242
+        "predicted_cost_per_mile_gbp": 1.241
       },
       {
         "segment": "supermini",
@@ -67770,7 +67770,7 @@
         "diesel_gbp_per_litre": 1.9,
         "weighted_electricity_gbp_per_kwh": 0.644,
         "actual_cost_per_mile_gbp": 1.096,
-        "predicted_cost_per_mile_gbp": 1.093
+        "predicted_cost_per_mile_gbp": 1.094
       }
     ]
   },
@@ -67966,11 +67966,11 @@
       ]
     ],
     "loss_curve": [
-      0.50039,
-      0.01139,
-      0.00297,
+      0.5004,
+      0.01148,
+      0.00295,
       0.00121,
-      0.0008,
+      0.00081,
       0.00082,
       0.00095
     ],
@@ -68039,9 +68039,9 @@
         "all_probs": {
           "Type 2 AC": 0.0,
           "CCS Combo": 0.9995,
-          "CHAdeMO": 0.0002,
+          "CHAdeMO": 0.0001,
           "Tesla NACS": 0.0001,
-          "Domestic 3-pin": 0.0002
+          "Domestic 3-pin": 0.0003
         }
       },
       {
@@ -68049,14 +68049,14 @@
         "label_index": 1,
         "url": "/images/cv/samples/ccs-combo-2.png",
         "predicted": "CCS Combo",
-        "confidence": 0.9994,
+        "confidence": 0.9993,
         "correct": true,
         "all_probs": {
           "Type 2 AC": 0.0,
-          "CCS Combo": 0.9994,
+          "CCS Combo": 0.9993,
           "CHAdeMO": 0.0001,
           "Tesla NACS": 0.0,
-          "Domestic 3-pin": 0.0005
+          "Domestic 3-pin": 0.0006
         }
       },
       {
@@ -68071,7 +68071,7 @@
           "CCS Combo": 0.9999,
           "CHAdeMO": 0.0,
           "Tesla NACS": 0.0,
-          "Domestic 3-pin": 0.0
+          "Domestic 3-pin": 0.0001
         }
       },
       {
@@ -68082,7 +68082,7 @@
         "confidence": 0.9993,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0005,
+          "Type 2 AC": 0.0004,
           "CCS Combo": 0.0002,
           "CHAdeMO": 0.9993,
           "Tesla NACS": 0.0001,
@@ -68097,7 +68097,7 @@
         "confidence": 0.9992,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0008,
+          "Type 2 AC": 0.0007,
           "CCS Combo": 0.0,
           "CHAdeMO": 0.9992,
           "Tesla NACS": 0.0,
@@ -68124,13 +68124,13 @@
         "label_index": 3,
         "url": "/images/cv/samples/tesla-nacs-1.png",
         "predicted": "Tesla NACS",
-        "confidence": 0.9997,
+        "confidence": 0.9998,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0002,
+          "Type 2 AC": 0.0001,
           "CCS Combo": 0.0,
           "CHAdeMO": 0.0,
-          "Tesla NACS": 0.9997,
+          "Tesla NACS": 0.9998,
           "Domestic 3-pin": 0.0
         }
       },
@@ -68139,14 +68139,14 @@
         "label_index": 3,
         "url": "/images/cv/samples/tesla-nacs-2.png",
         "predicted": "Tesla NACS",
-        "confidence": 0.9993,
+        "confidence": 0.9994,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0003,
+          "Type 2 AC": 0.0002,
           "CCS Combo": 0.0001,
           "CHAdeMO": 0.0,
-          "Tesla NACS": 0.9993,
-          "Domestic 3-pin": 0.0002
+          "Tesla NACS": 0.9994,
+          "Domestic 3-pin": 0.0003
         }
       },
       {
@@ -68154,13 +68154,13 @@
         "label_index": 3,
         "url": "/images/cv/samples/tesla-nacs-3.png",
         "predicted": "Tesla NACS",
-        "confidence": 0.9982,
+        "confidence": 0.9985,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0009,
+          "Type 2 AC": 0.0006,
           "CCS Combo": 0.0001,
-          "CHAdeMO": 0.0001,
-          "Tesla NACS": 0.9982,
+          "CHAdeMO": 0.0,
+          "Tesla NACS": 0.9985,
           "Domestic 3-pin": 0.0008
         }
       },

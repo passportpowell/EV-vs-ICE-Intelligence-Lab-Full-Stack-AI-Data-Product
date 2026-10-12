@@ -1,0 +1,47 @@
+{
+  "fetched_at": "2026-10-12T11:17:09.622Z",
+  "region": "C",
+  "source_name": "Octopus Energy public API",
+  "tariffs": [
+    {
+      "product_code": "AGILE-24-10-01",
+      "display_name": "Agile Octopus",
+      "is_green": true,
+      "unit_rate_p_per_kwh": 49.41,
+      "off_peak_p_per_kwh": null,
+      "peak_p_per_kwh": 49.41,
+      "standing_charge_p_per_day": 37.6525,
+      "source_url": "https://api.octopus.energy/v1/products/AGILE-24-10-01/"
+    },
+    {
+      "product_code": "GO-VAR-22-10-14",
+      "display_name": "Octopus Go",
+      "is_green": false,
+      "unit_rate_p_per_kwh": 29.5154,
+      "off_peak_p_per_kwh": null,
+      "peak_p_per_kwh": 29.5154,
+      "standing_charge_p_per_day": 42.0215,
+      "source_url": "https://api.octopus.energy/v1/products/GO-VAR-22-10-14/"
+    },
+    {
+      "product_code": "INTELLI-VAR-22-10-14",
+      "display_name": "Intelligent Octopus Go",
+      "is_green": false,
+      "unit_rate_p_per_kwh": null,
+      "off_peak_p_per_kwh": null,
+      "peak_p_per_kwh": null,
+      "standing_charge_p_per_day": null,
+      "source_url": "https://api.octopus.energy/v1/products/INTELLI-VAR-22-10-14/"
+    },
+    {
+      "product_code": "COSY-22-12-08",
+      "display_name": "Cosy Octopus",
+      "is_green": false,
+      "unit_rate_p_per_kwh": 25.3593,
+      "off_peak_p_per_kwh": null,
+      "peak_p_per_kwh": 25.3593,
+      "standing_charge_p_per_day": 40.4025,
+      "source_url": "https://api.octopus.energy/v1/products/COSY-22-12-08/"
+    }
+  ]
+}
