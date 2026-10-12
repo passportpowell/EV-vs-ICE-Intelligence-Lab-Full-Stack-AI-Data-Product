@@ -1,18 +1,23 @@
 # EV vs ICE Intelligence Lab
 
-[![CI](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/ci.yml/badge.svg)](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/ci.yml)
-[![E2E](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/e2e.yml/badge.svg)](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/e2e.yml)
-[![CodeQL](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/codeql.yml/badge.svg)](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/codeql.yml)
-[![Refresh data](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/refresh-data.yml/badge.svg)](https://github.com/passportpowell/ev-vs-ice-comparison/actions/workflows/refresh-data.yml)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](tsconfig.json)
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](pyproject.toml)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](package.json)
+[![CI](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/ci.yml/badge.svg)](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/ci.yml)
+[![E2E](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/e2e.yml/badge.svg)](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/e2e.yml)
+[![CodeQL](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/codeql.yml/badge.svg)](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/codeql.yml)
+[![Refresh data](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/refresh-data.yml/badge.svg)](https://github.com/passportpowell/EV-vs-ICE-Intelligence-Lab-Full-Stack-AI-Data-Product/actions/workflows/refresh-data.yml)
 
 Interactive portfolio project comparing electric vehicles with petrol and diesel ICE vehicles across ownership cost, energy use, lifecycle emissions, driving style, and scenario assumptions.
 
 The repo is designed to show full-stack data product work rather than a static dashboard: Python processing builds the dataset, SQLite stores the analytical artifact, REST API routes expose comparisons, and the React UI makes the assumptions adjustable.
 
-## Portfolio Signals
+## Status and interpretation
+
+This is a **portfolio prototype**, not a validated vehicle purchasing or fleet procurement service. Results depend on the selected vehicle data, source dates and user assumptions. Generated artifacts and a successful HTTP response do not establish that every upstream input is current.
+
+Fuel prices are discovered from DESNZ's open-ended current CSV series or dated weekly releases, excluding the 2003–2017 archive. The parser chooses the greatest valid, non-future source date. A weekly observation older than **14 days** is marked stale; this is an application policy, not an official publication guarantee. Fetch/check time is separate from observation date. Failed discovery, requests or invalid rows return an explicitly stale checked fallback. The dashboard displays the observation date, status, check time and source link, and allows manual price overrides.
+
+Dependency checks block moderate-or-higher findings across runtime and development packages. The only temporary exception is the development-only braces advisory, owned and expiring as documented in [dependency audit policy](docs/SECURITY.md). A passing gate with that exception does not mean an unfiltered audit is clean.
+
+## Engineering evidence
 
 - **Python data context:** Pandas, NumPy, SciPy, and scikit-learn pipeline in `pipeline/ev_ice_pipeline`.
 - **Scientific stack:** cost/emissions modelling, signal processing over drive cycles, generated feature tables.
@@ -21,7 +26,7 @@ The repo is designed to show full-stack data product work rather than a static d
 - **RAG:** local retrieval over a generated vehicle/scenario/model knowledge corpus, exposed in UI and API.
 - **Trim-aware data modelling:** vehicle catalog tracks make, model, model year, trim, body style, and UK market status.
 - **Data provenance:** overlapping DVLA/catalog values are compared field by field, with conflicts shown side by side by source.
-- **Current UK energy pricing:** EV tariff comparison includes off-peak rates, peak rates, standing charges, source dates, GOV.UK petrol/diesel refresh, and custom user overrides.
+- **Source-dated UK energy pricing:** EV tariff comparison includes off-peak rates, peak rates, standing charges, source dates, GOV.UK petrol/diesel refresh, and custom user overrides.
 - **Equivalent vehicle comparison:** selecting a trim populates comparable same-segment EV, petrol, diesel, and hybrid options with manual override slots.
 - **Trim matching:** DVLA imports are ranked against local trims with confidence scores and match reasons.
 - **SQL:** reproducible SQLite artifact at `data/processed/ev_ice_comparison.sqlite`.
@@ -30,7 +35,7 @@ The repo is designed to show full-stack data product work rather than a static d
 - **Automation / CI/CD:** GitHub Actions workflow runs data build, Python tests, TypeScript tests, linting, and Next build.
 - **SEO:** metadata, robots, sitemap, Open Graph metadata, and structured JSON-LD.
 - **Vercel-ready:** `vercel.json` and standard Next.js build flow.
-- **Production hardening:** health endpoint, security headers, dependency audit, error boundary, and typed API responses.
+- **Reliability mechanisms demonstrated:** health endpoint, security headers, dependency audit, error boundary, and typed API responses.
 
 ## Local Setup
 

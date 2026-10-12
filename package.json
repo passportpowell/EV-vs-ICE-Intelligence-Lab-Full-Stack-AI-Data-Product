@@ -14,12 +14,14 @@
     "test:e2e:install": "playwright install --with-deps chromium",
     "data:build": "python -m pipeline.ev_ice_pipeline.build",
     "data:test": "pytest tests/python",
-    "security:audit": "npm audit --audit-level=moderate",
+    "security:audit": "node scripts/security-audit.mjs",
+    "security:audit:raw": "npm audit --audit-level=moderate",
+    "security:audit:runtime": "npm audit --omit=dev --audit-level=moderate",
     "check": "npm run data:build && npm run data:test && npm run lint && npm run test && npm run security:audit && npm run build"
   },
   "dependencies": {
     "lucide-react": "1.14.0",
-    "next": "16.2.4",
+    "next": "16.4.0",
     "onnxruntime-node": "^1.25.1",
     "pngjs": "^7.0.0",
     "react": "19.2.5",
@@ -35,12 +37,12 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.2.4",
+    "eslint-config-next": "16.4.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.5"
+    "vitest": "4.1.11"
   },
   "overrides": {
-    "postcss": "8.5.13"
+    "postcss": "^8.5.23"
   },
   "engines": {
     "node": ">=22.0.0",

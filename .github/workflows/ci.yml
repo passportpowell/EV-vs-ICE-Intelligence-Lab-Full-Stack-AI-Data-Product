@@ -49,9 +49,8 @@ jobs:
       - name: Test TypeScript calculations
         run: npm run test
 
-      - name: Audit production dependencies
+      - name: Audit all dependencies (blocking moderate gate)
         run: npm run security:audit
-        continue-on-error: true
 
       - name: Build Next.js app
         run: npm run build

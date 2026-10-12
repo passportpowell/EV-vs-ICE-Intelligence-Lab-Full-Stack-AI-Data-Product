@@ -758,7 +758,7 @@ export function Dashboard({ data }: DashboardProps) {
 
       <div className="hero-narrative-banner">
         <p>
-          UK Total Cost of Ownership &amp; Carbon Intelligence Engine — Powered by Scikit-Learn regression, DESNZ live weekly pump prices, National Grid ESO real-time carbon intensity, and an ONNX connector classifier.
+          Portfolio prototype for vehicle cost and carbon comparisons, using Python models, source-dated weekly fuel prices, adjustable assumptions and an ONNX connector classifier.
         </p>
       </div>
 
@@ -1130,7 +1130,7 @@ export function Dashboard({ data }: DashboardProps) {
           <PanelIntro>
             Punch in your battery size, charging window, and rough fuel
             economy. Calculations use your scenario&rsquo;s annual mileage and
-            today&rsquo;s GOV.UK pump prices. No make or model required.
+            the source-dated weekly fuel prices or your manual overrides. No make or model required.
           </PanelIntro>
 
           <fieldset className="energy-input-group">
@@ -1315,12 +1315,19 @@ export function Dashboard({ data }: DashboardProps) {
                 />
               </div>
               <div className="fuel-source-readout">
-                <span>Live UK averages</span>
+                <span>UK weekly averages (source date)</span>
                 <strong>
                   {fuelSnapshot
-                    ? `${fuelSnapshot.source_name}, ${fuelSnapshot.date}${fuelSnapshot.stale ? " (fallback)" : ""}`
+                    ? `${fuelSnapshot.source_name}, ${fuelSnapshot.date}${fuelSnapshot.stale ? " (stale or fallback)" : " (within 14-day policy)"}`
                     : "loading GOV.UK weekly fuel prices…"}
                 </strong>
+                {fuelSnapshot && (
+                  <small>
+                    {fuelSnapshot.note}{" "}
+                    Checked {new Date(fuelSnapshot.fetched_at).toLocaleString("en-GB")}.{" "}
+                    <a href={fuelSnapshot.source_url} target="_blank" rel="noopener noreferrer">Source CSV</a>
+                  </small>
+                )}
               </div>
             </div>
           </fieldset>
