@@ -1,41 +1,33 @@
 {
-  "fetched_at": "2026-10-14T08:59:29.244Z",
-  "from": "2026-10-14T08:00Z",
-  "to": "2026-10-14T08:30Z",
-  "forecast_gco2_per_kwh": 132,
-  "actual_gco2_per_kwh": 125,
-  "index": "moderate",
+  "fetched_at": "2026-10-15T08:33:15.693Z",
+  "from": "2026-10-15T08:00Z",
+  "to": "2026-10-15T08:30Z",
+  "forecast_gco2_per_kwh": 75,
+  "actual_gco2_per_kwh": 86,
+  "index": "low",
   "generation_mix": [
     {
       "fuel": "wind",
-      "percentage": 29.8
-    },
-    {
-      "fuel": "gas",
-      "percentage": 22.3
+      "percentage": 53.6
     },
     {
       "fuel": "nuclear",
-      "percentage": 12.8
+      "percentage": 14.7
     },
     {
-      "fuel": "imports",
-      "percentage": 12.2
-    },
-    {
-      "fuel": "solar",
-      "percentage": 8.9
+      "fuel": "gas",
+      "percentage": 14.6
     },
     {
       "fuel": "biomass",
-      "percentage": 8.7
+      "percentage": 8.8
     },
     {
-      "fuel": "other",
-      "percentage": 3.2
+      "fuel": "imports",
+      "percentage": 5.9
     },
     {
-      "fuel": "hydro",
+      "fuel": "solar",
       "percentage": 2.3
     }
   ],
