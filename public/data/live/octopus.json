@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-20T08:51:18.780Z",
+  "fetched_at": "2026-10-21T08:50:22.928Z",
   "region": "C",
   "source_name": "Octopus Energy public API",
   "tariffs": [
@@ -7,9 +7,9 @@
       "product_code": "AGILE-24-10-01",
       "display_name": "Agile Octopus",
       "is_green": true,
-      "unit_rate_p_per_kwh": 53.04,
+      "unit_rate_p_per_kwh": 50.06,
       "off_peak_p_per_kwh": null,
-      "peak_p_per_kwh": 53.04,
+      "peak_p_per_kwh": 50.06,
       "standing_charge_p_per_day": 37.6525,
       "source_url": "https://api.octopus.energy/v1/products/AGILE-24-10-01/"
     },
@@ -37,10 +37,10 @@
       "product_code": "COSY-22-12-08",
       "display_name": "Cosy Octopus",
       "is_green": false,
-      "unit_rate_p_per_kwh": 25.3593,
+      "unit_rate_p_per_kwh": 28.796,
       "off_peak_p_per_kwh": null,
-      "peak_p_per_kwh": 25.3593,
-      "standing_charge_p_per_day": 40.4025,
+      "peak_p_per_kwh": 28.796,
+      "standing_charge_p_per_day": 42.2934,
       "source_url": "https://api.octopus.energy/v1/products/COSY-22-12-08/"
     }
   ]
