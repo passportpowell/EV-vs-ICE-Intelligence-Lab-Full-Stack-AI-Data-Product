@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21T08:52:53.634302+00:00",
+  "generated_at": "2026-10-22T08:57:10.066168+00:00",
   "project": {
     "name": "EV vs ICE Intelligence Lab",
     "slug": "ev-ice-intelligence-lab",
@@ -67966,9 +67966,9 @@
       ]
     ],
     "loss_curve": [
-      0.50037,
-      0.01146,
-      0.00293,
+      0.5004,
+      0.01148,
+      0.00295,
       0.00121,
       0.00081,
       0.00082,
@@ -68041,7 +68041,7 @@
           "CCS Combo": 0.9995,
           "CHAdeMO": 0.0001,
           "Tesla NACS": 0.0001,
-          "Domestic 3-pin": 0.0002
+          "Domestic 3-pin": 0.0003
         }
       },
       {
@@ -68049,14 +68049,14 @@
         "label_index": 1,
         "url": "/images/cv/samples/ccs-combo-2.png",
         "predicted": "CCS Combo",
-        "confidence": 0.9994,
+        "confidence": 0.9993,
         "correct": true,
         "all_probs": {
           "Type 2 AC": 0.0,
-          "CCS Combo": 0.9994,
+          "CCS Combo": 0.9993,
           "CHAdeMO": 0.0001,
           "Tesla NACS": 0.0,
-          "Domestic 3-pin": 0.0005
+          "Domestic 3-pin": 0.0006
         }
       },
       {
@@ -68094,12 +68094,12 @@
         "label_index": 2,
         "url": "/images/cv/samples/chademo-2.png",
         "predicted": "CHAdeMO",
-        "confidence": 0.9993,
+        "confidence": 0.9992,
         "correct": true,
         "all_probs": {
           "Type 2 AC": 0.0007,
           "CCS Combo": 0.0,
-          "CHAdeMO": 0.9993,
+          "CHAdeMO": 0.9992,
           "Tesla NACS": 0.0,
           "Domestic 3-pin": 0.0
         }
@@ -68127,7 +68127,7 @@
         "confidence": 0.9998,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0002,
+          "Type 2 AC": 0.0001,
           "CCS Combo": 0.0,
           "CHAdeMO": 0.0,
           "Tesla NACS": 0.9998,
@@ -68146,7 +68146,7 @@
           "CCS Combo": 0.0001,
           "CHAdeMO": 0.0,
           "Tesla NACS": 0.9994,
-          "Domestic 3-pin": 0.0002
+          "Domestic 3-pin": 0.0003
         }
       },
       {
@@ -68154,13 +68154,13 @@
         "label_index": 3,
         "url": "/images/cv/samples/tesla-nacs-3.png",
         "predicted": "Tesla NACS",
-        "confidence": 0.9984,
+        "confidence": 0.9985,
         "correct": true,
         "all_probs": {
-          "Type 2 AC": 0.0007,
+          "Type 2 AC": 0.0006,
           "CCS Combo": 0.0001,
           "CHAdeMO": 0.0,
-          "Tesla NACS": 0.9984,
+          "Tesla NACS": 0.9985,
           "Domestic 3-pin": 0.0008
         }
       },
