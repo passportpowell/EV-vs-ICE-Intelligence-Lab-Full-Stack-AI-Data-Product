@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-22T08:54:23.690Z",
+  "fetched_at": "2026-10-23T08:49:58.093Z",
   "region": "C",
   "source_name": "Octopus Energy public API",
   "tariffs": [
@@ -7,9 +7,9 @@
       "product_code": "AGILE-24-10-01",
       "display_name": "Agile Octopus",
       "is_green": true,
-      "unit_rate_p_per_kwh": 47.37,
+      "unit_rate_p_per_kwh": 47.82,
       "off_peak_p_per_kwh": null,
-      "peak_p_per_kwh": 47.37,
+      "peak_p_per_kwh": 47.82,
       "standing_charge_p_per_day": 37.6525,
       "source_url": "https://api.octopus.energy/v1/products/AGILE-24-10-01/"
     },
