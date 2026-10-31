@@ -1,42 +1,42 @@
 {
-  "fetched_at": "2026-10-30T10:24:55.946Z",
-  "from": "2026-10-30T09:30Z",
-  "to": "2026-10-30T10:00Z",
-  "forecast_gco2_per_kwh": 158,
-  "actual_gco2_per_kwh": 149,
-  "index": "moderate",
+  "fetched_at": "2026-10-31T09:56:06.686Z",
+  "from": "2026-10-31T09:00Z",
+  "to": "2026-10-31T09:30Z",
+  "forecast_gco2_per_kwh": 186,
+  "actual_gco2_per_kwh": 170,
+  "index": "high",
   "generation_mix": [
     {
       "fuel": "gas",
-      "percentage": 33.9
-    },
-    {
-      "fuel": "wind",
-      "percentage": 20.6
+      "percentage": 34.5
     },
     {
       "fuel": "nuclear",
-      "percentage": 13
-    },
-    {
-      "fuel": "solar",
-      "percentage": 11.9
+      "percentage": 16.4
     },
     {
       "fuel": "imports",
-      "percentage": 9.5
+      "percentage": 15
     },
     {
       "fuel": "biomass",
-      "percentage": 8.4
+      "percentage": 10.7
+    },
+    {
+      "fuel": "solar",
+      "percentage": 10.1
+    },
+    {
+      "fuel": "wind",
+      "percentage": 9.1
     },
     {
       "fuel": "hydro",
-      "percentage": 1.8
+      "percentage": 2.6
     },
     {
       "fuel": "other",
-      "percentage": 0.9
+      "percentage": 1.6
     }
   ],
   "source_name": "National Grid ESO Carbon Intensity API",
