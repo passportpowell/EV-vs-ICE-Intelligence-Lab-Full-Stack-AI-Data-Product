@@ -73,11 +73,11 @@
     ]
   ],
   "loss_curve": [
-    0.50034,
-    0.01138,
+    0.5004,
+    0.01148,
     0.00295,
     0.00121,
-    0.0008,
+    0.00081,
     0.00082,
     0.00095
   ],
@@ -146,9 +146,9 @@
       "all_probs": {
         "Type 2 AC": 0.0,
         "CCS Combo": 0.9995,
-        "CHAdeMO": 0.0002,
+        "CHAdeMO": 0.0001,
         "Tesla NACS": 0.0001,
-        "Domestic 3-pin": 0.0002
+        "Domestic 3-pin": 0.0003
       }
     },
     {
@@ -156,14 +156,14 @@
       "label_index": 1,
       "url": "/images/cv/samples/ccs-combo-2.png",
       "predicted": "CCS Combo",
-      "confidence": 0.9994,
+      "confidence": 0.9993,
       "correct": true,
       "all_probs": {
         "Type 2 AC": 0.0,
-        "CCS Combo": 0.9994,
+        "CCS Combo": 0.9993,
         "CHAdeMO": 0.0001,
         "Tesla NACS": 0.0,
-        "Domestic 3-pin": 0.0005
+        "Domestic 3-pin": 0.0006
       }
     },
     {
@@ -178,7 +178,7 @@
         "CCS Combo": 0.9999,
         "CHAdeMO": 0.0,
         "Tesla NACS": 0.0,
-        "Domestic 3-pin": 0.0
+        "Domestic 3-pin": 0.0001
       }
     },
     {
@@ -189,7 +189,7 @@
       "confidence": 0.9993,
       "correct": true,
       "all_probs": {
-        "Type 2 AC": 0.0005,
+        "Type 2 AC": 0.0004,
         "CCS Combo": 0.0002,
         "CHAdeMO": 0.9993,
         "Tesla NACS": 0.0001,
@@ -204,7 +204,7 @@
       "confidence": 0.9992,
       "correct": true,
       "all_probs": {
-        "Type 2 AC": 0.0008,
+        "Type 2 AC": 0.0007,
         "CCS Combo": 0.0,
         "CHAdeMO": 0.9992,
         "Tesla NACS": 0.0,
@@ -231,13 +231,13 @@
       "label_index": 3,
       "url": "/images/cv/samples/tesla-nacs-1.png",
       "predicted": "Tesla NACS",
-      "confidence": 0.9997,
+      "confidence": 0.9998,
       "correct": true,
       "all_probs": {
-        "Type 2 AC": 0.0002,
+        "Type 2 AC": 0.0001,
         "CCS Combo": 0.0,
         "CHAdeMO": 0.0,
-        "Tesla NACS": 0.9997,
+        "Tesla NACS": 0.9998,
         "Domestic 3-pin": 0.0
       }
     },
@@ -246,14 +246,14 @@
       "label_index": 3,
       "url": "/images/cv/samples/tesla-nacs-2.png",
       "predicted": "Tesla NACS",
-      "confidence": 0.9993,
+      "confidence": 0.9994,
       "correct": true,
       "all_probs": {
-        "Type 2 AC": 0.0003,
+        "Type 2 AC": 0.0002,
         "CCS Combo": 0.0001,
         "CHAdeMO": 0.0,
-        "Tesla NACS": 0.9993,
-        "Domestic 3-pin": 0.0002
+        "Tesla NACS": 0.9994,
+        "Domestic 3-pin": 0.0003
       }
     },
     {
@@ -261,13 +261,13 @@
       "label_index": 3,
       "url": "/images/cv/samples/tesla-nacs-3.png",
       "predicted": "Tesla NACS",
-      "confidence": 0.9982,
+      "confidence": 0.9985,
       "correct": true,
       "all_probs": {
-        "Type 2 AC": 0.0008,
+        "Type 2 AC": 0.0006,
         "CCS Combo": 0.0001,
         "CHAdeMO": 0.0,
-        "Tesla NACS": 0.9982,
+        "Tesla NACS": 0.9985,
         "Domestic 3-pin": 0.0008
       }
     },
